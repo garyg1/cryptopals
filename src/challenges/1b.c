@@ -3,8 +3,6 @@
 #include "../lib/hex_to_base64.c"
 #include "../lib/xor_buffers.c"
 
-typedef uint8_t *buf_t;
-
 int main(int argc, char const *argv[])
 {
     buf_t buf1, buf2;

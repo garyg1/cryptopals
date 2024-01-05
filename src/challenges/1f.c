@@ -1,51 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include "../lib/edit_distance.c"
 #include "../lib/hex_to_base64.c"
 #include "../lib/common.c"
 #include "../lib/english_match.c"
-
-char *read_base64_from_file(char *filename, size_t *base64_len)
-{
-    FILE *fp;
-    char *line = NULL;
-    size_t len = 0;
-    ssize_t read;
-    fp = fopen(filename, "r");
-    if (fp == NULL)
-    {
-        exit(EXIT_FAILURE);
-    }
-
-    int line_idx = 0;
-    char *lines[1000];
-    size_t sizes[1000];
-    size_t total = 0;
-    while ((read = getline(&line, &len, fp)) != -1)
-    {
-        lines[line_idx] = strdup(line);
-        if (line[read - 1] == '\n')
-        {
-            read -= 1;
-        }
-        sizes[line_idx] = read;
-        total += read;
-        line_idx += 1;
-    }
-
-    char *base64 = calloc(total + 1, sizeof(char));
-
-    size_t offset = 0;
-    for (int i = 0; i < line_idx; i++)
-    {
-        memcpy(base64 + offset, lines[i], sizes[i]);
-        offset += sizes[i];
-    }
-
-    *base64_len = total;
-    return base64;
-}
 
 buf_t every_nth_char(buf_t arr, size_t arr_len, int n, int offset, size_t *_out_len)
 {
@@ -68,7 +28,7 @@ int main(int argc, char const *argv[])
     printf("%d\n", edit_distance(s1, s2, sizeof(s1) - 1));
 
     size_t base64_len;
-    char *base64 = read_base64_from_file("./1-6.txt", &base64_len);
+    char *base64 = read_multiline_from_file("./1-6.txt", &base64_len);
 
     size_t bytes_len;
     buf_t bytes = base64_to_bytes(base64, base64_len, &bytes_len);
@@ -78,25 +38,25 @@ int main(int argc, char const *argv[])
     const int NUM_SAMPLE_CHUNKS = 20;
     double keysizes[MAX_KEYSIZE - MIN_KEYSIZE];
     int keysizes_len = MAX_KEYSIZE - MIN_KEYSIZE;
+    buf_t chunk1 = malloc(MAX_KEYSIZE);
+    buf_t chunk2 = malloc(MAX_KEYSIZE);
     for (int keysize = MIN_KEYSIZE; keysize <= MAX_KEYSIZE; keysize++)
     {
-        buf_t chunk1 = malloc(keysize);
-        buf_t chunk2 = malloc(keysize);
         keysizes[keysize - MIN_KEYSIZE] = 0;
-        for (int i = 0; i < NUM_SAMPLE_CHUNKS; i++)
+        for (int i = 1; i < NUM_SAMPLE_CHUNKS; i++)
         {
-            memcpy(chunk1, &bytes[keysize * i], keysize);
-            memcpy(chunk2, &bytes[keysize * (i + 1)], keysize);
+            memcpy(chunk1, bytes, MAX_KEYSIZE);
+            memcpy(chunk2, bytes + keysize * i, MAX_KEYSIZE);
             int dst = edit_distance(chunk1, chunk2, keysize);
             keysizes[keysize - MIN_KEYSIZE] += dst * 0.1 / keysize;
         }
     }
 
-    double min_keysize;
+    double min_keysize = 0.0;
     int candidate_keysize = arg_min_d(keysizes, keysizes_len, &min_keysize) + MIN_KEYSIZE;
-    printf("candidate keysize: %d (score: %f)\n", candidate_keysize, min_keysize);
+    printf("candidate keysize: %d, (score: %f)\n", candidate_keysize, min_keysize);
 
-    uint8_t *key = malloc(candidate_keysize);
+    uint8_t *key = malloc(candidate_keysize + 1);
     for (int i = 0; i < candidate_keysize; i++)
     {
         size_t block_len;
