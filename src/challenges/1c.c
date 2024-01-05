@@ -11,6 +11,6 @@ int main(int argc, char const *argv[])
     const size_t x_len = sizeof(x) / sizeof(char);
     char chr;
     int score;
-    char *ans = get_best_english_match(x, x_len, &chr, &score);
+    char *ans = get_best_english_match(x, x_len - 1, &chr, &score);
     printf("[%c] %s [%d]\n", chr, ans, score);
 }

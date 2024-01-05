@@ -22,9 +22,8 @@ int main(int argc, char const *argv[])
     int scores[1000];
     while ((read = getline(&line, &len, fp)) != -1)
     {
-        len -= 6;
         int score;
-        char *ans = get_best_english_match(line, len, &chr, &score);
+        char *ans = get_best_english_match(line, read - 1, &chr, &score);
         candidates[line_idx] = ans;
         scores[line_idx] = score;
 
@@ -33,7 +32,7 @@ int main(int argc, char const *argv[])
 
     int best_score = 1;
     int best_idx = arg_max(scores, line_idx, &best_score);
-    printf("[%d] %s [%d]\n", best_idx, candidates[best_idx], best_score);
 
+    printf("[%d] [%d] %s", best_idx, best_score, candidates[best_idx]);
     fclose(fp);
 }
