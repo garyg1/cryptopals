@@ -53,7 +53,7 @@ int from_b64(char c)
 buf_t hex_to_bytes(char *hex, size_t hex_len, size_t *bytes_len)
 {
     *bytes_len = (hex_len + 1) / 2;
-    buf_t bytes = malloc(*bytes_len);
+    buf_t bytes = (buf_t)malloc(*bytes_len);
     for (int i = 0; i < hex_len / 2; i++)
     {
         bytes[i] = (to_hex(hex[2 * i]) << 4) | to_hex(hex[2 * i + 1]);
@@ -69,7 +69,7 @@ buf_t hex_to_bytes(char *hex, size_t hex_len, size_t *bytes_len)
 
 char *bytes_to_hex(buf_t bytes, size_t size, size_t *hex_len)
 {
-    char *hex = calloc(size * 2 + 1, sizeof(char));
+    char *hex = (char *)calloc(size * 2 + 1, sizeof(char));
     for (size_t i = 0; i < size; i++)
     {
         hex[2 * i] = to_chr((bytes[i] & 0xf0) >> 4);
@@ -87,7 +87,7 @@ char *bytes_to_base64(buf_t bytes, size_t bytes_len, size_t *base64_len)
                             : (padding_case == 1) ? 2
                                                   : 1;
     *base64_len = (bytes_len * 4 + 2) / 3 + padding_len;
-    char *base64_result = calloc(*base64_len + 1, sizeof(char));
+    char *base64_result = (char *)calloc(*base64_len + 1, sizeof(char));
     for (int i = 0; i < *base64_len - padding_len; i++)
     {
         int bytes_i = i / 4 * 3;
@@ -138,7 +138,7 @@ char *bytes_to_base64(buf_t bytes, size_t bytes_len, size_t *base64_len)
 buf_t base64_to_bytes(char *base64, size_t base64_len, size_t *bytes_len)
 {
     size_t max_bytes_len = base64_len * 6 / 8;
-    buf_t bytes = calloc(max_bytes_len, 1);
+    buf_t bytes = (buf_t) calloc(max_bytes_len, 1);
     size_t actual_bytes_len = 0;
 
     for (int i = 0; i < base64_len; i++)

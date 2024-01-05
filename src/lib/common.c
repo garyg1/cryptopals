@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-
 typedef uint8_t *buf_t;
 
 int arg_max(int *arr, size_t len, int *value)
@@ -124,7 +123,6 @@ int get_english_freq_score(char c)
     }
 }
 
-
 char *read_multiline_from_file(char *filename, size_t *base64_len)
 {
     FILE *fp;
@@ -153,7 +151,7 @@ char *read_multiline_from_file(char *filename, size_t *base64_len)
         line_idx += 1;
     }
 
-    char *base64 = calloc(total + 1, sizeof(char));
+    char *base64 = (char *)calloc(total + 1, sizeof(char));
 
     size_t offset = 0;
     for (int i = 0; i < line_idx; i++)
@@ -164,4 +162,50 @@ char *read_multiline_from_file(char *filename, size_t *base64_len)
 
     *base64_len = total;
     return base64;
+}
+
+char **read_lines_from_file(char *filename, size_t *num_lines)
+{
+    FILE *fp;
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t read;
+    fp = fopen(filename, "r");
+    if (fp == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }
+
+    int line_idx = 0;
+    char *lines[1000];
+    while ((read = getline(&line, &len, fp)) != -1)
+    {
+        lines[line_idx] = strdup(line);
+        if (line[read - 1] == '\n')
+        {
+            read -= 1;
+        }
+        line_idx += 1;
+    }
+
+    char **output = (char **)calloc(line_idx, sizeof(char *));
+    for (int i = 0; i < line_idx; i++)
+    {
+        output[i] = strdup(lines[i]);
+    }
+
+    *num_lines = line_idx;
+    return output;
+}
+
+bool are_bytes_equal(buf_t buf1, buf_t buf2, size_t size)
+{
+    for (int i = 0; i < size; i++)
+    {
+        if (buf1[i] != buf2[i])
+        {
+            return false;
+        }
+    }
+    return true;
 }
