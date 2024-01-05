@@ -104,6 +104,8 @@ int get_english_freq_score(char c)
     case 'e':
     case 'a':
     case 'i':
+    case 'o':
+    case 'u':
         return 30;
     case 'r':
     case 's':
@@ -113,7 +115,6 @@ int get_english_freq_score(char c)
     case ' ':
         return 10;
     case 'q':
-    case 'u':
     case 'z':
     case 'x':
         return 1;
