@@ -1,26 +1,19 @@
 CC=clang
 CFLAGS= -Wall -L/opt/homebrew/opt/openssl@3/lib -I/opt/homebrew/opt/openssl@3/include -lssl -lcrypto
 
-all: 1a 1b 1c 1d 1e 1f 1g 1h 2a
+all: challenges
 
-1a:
-	$(CC) $(CFLAGS) 1a.c -o 1a.exe
-1b:
-	$(CC) $(CFLAGS) 1b.c -o 1b.exe
-1c:
-	$(CC) $(CFLAGS) 1c.c -o 1c.exe
-1d:
-	$(CC) $(CFLAGS) 1d.c -o 1d.exe
-1e:
-	$(CC) $(CFLAGS) 1e.c -o 1e.exe
-1f:
-	$(CC) $(CFLAGS) 1f.c -o 1f.exe
-1g:
-	$(CC) $(CFLAGS) 1g.c -o 1g.exe
-1h:
-	$(CC) $(CFLAGS) 1h.c -o 1h.exe
-2a:
-	$(CC) $(CFLAGS) 2a.c -o 2a.exe
+challenges:
+	$(CC) $(CFLAGS) 1-1.c -o 1-1.exe
+	$(CC) $(CFLAGS) 1-2.c -o 1-2.exe
+	$(CC) $(CFLAGS) 1-3.c -o 1-3.exe
+	$(CC) $(CFLAGS) 1-4.c -o 1-4.exe
+	$(CC) $(CFLAGS) 1-5.c -o 1-5.exe
+	$(CC) $(CFLAGS) 1-6.c -o 1-6.exe
+	$(CC) $(CFLAGS) 1-7.c -o 1-7.exe
+	$(CC) $(CFLAGS) 1-8.c -o 1-8.exe
+	$(CC) $(CFLAGS) 2-1.c -o 2-1.exe
+	$(CC) $(CFLAGS) 2-2.c -o 2-2.exe
 
 clean:
 	rm -f *.exe
