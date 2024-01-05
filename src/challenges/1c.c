@@ -54,9 +54,10 @@ int main(int argc, char const *argv[])
     size_t buf1_len, buf2_len;
     buf1 = hex_to_bytes(x, x_len, &buf1_len);
 
-    char *candidate_bufs[256];
-    int scores[256];
-    for (int c = 0; c < 255; c++)
+    const int NUM_CANDIDATES = 256;
+    char *candidate_bufs[NUM_CANDIDATES];
+    int scores[NUM_CANDIDATES];
+    for (int c = 0; c < NUM_CANDIDATES; c++)
     {
         buf2 = malloc(buf1_len);
         for (int i = 0; i < buf1_len; i++)
@@ -71,6 +72,6 @@ int main(int argc, char const *argv[])
     }
 
     int max_score;
-    int i = arg_max(scores, 256, &max_score);
+    int i = arg_max(scores, NUM_CANDIDATES, &max_score);
     printf("[%c] %s\n", i, candidate_bufs[i]);
 }
