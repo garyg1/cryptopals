@@ -16,5 +16,4 @@ int main(int argc, char const *argv[])
 
     char *buf3_hex = bytes_to_hex(buf3, buf1_len);
     printf("%s\n", buf3_hex);
-    return 0;
 }
