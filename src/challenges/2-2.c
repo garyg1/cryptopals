@@ -8,12 +8,17 @@
 
 int main(int argc, char const *argv[])
 {
-    uint8_t input[] = "YELLOW SUBMARINE";
+    byte_t key[] = "YELLOW SUBMARINE";
+    byte_t iv[] = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 
-    size_t padded_len;
-    buf_t padded = pad_pkcs7(input, sizeof(input) - 1, 20, &padded_len);
+    size_t ciphertext_b64_len;
+    char *ciphertext_b64 = read_multiline_from_file("./2-2.txt", &ciphertext_b64_len);
 
-    size_t hex_len;
-    char *hex = bytes_to_hex(padded, padded_len, &hex_len);
-    printf("%s\n", hex);
+    size_t bytes_len;
+    buf_t bytes = base64_to_bytes(ciphertext_b64, ciphertext_b64_len, &bytes_len);
+
+    size_t enc_len;
+    buf_t enc = decrypt_aes128_cbc(bytes, bytes_len, key, iv, &enc_len);
+
+    printf("%s\n", enc);
 }

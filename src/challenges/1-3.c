@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "../lib/hex_to_base64.c"
-#include "../lib/xor_buffers.c"
 #include "../lib/english_match.c"
 
 int main(int argc, char const *argv[])

@@ -8,7 +8,7 @@
 
 int main(int argc, char const *argv[])
 {
-    uint8_t input[] = "YELLOW SUBMARINE";
+    byte_t input[] = "YELLOW SUBMARINE";
 
     size_t padded_len;
     buf_t padded = pad_pkcs7(input, sizeof(input) - 1, 20, &padded_len);

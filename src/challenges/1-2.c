@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../lib/hex_to_base64.c"
-#include "../lib/xor_buffers.c"
 
 int main(int argc, char const *argv[])
 {

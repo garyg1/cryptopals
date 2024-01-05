@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "./hex_to_base64.c"
-#include "./xor_buffers.c"
 #include "./common.c"
 
 int english_score(char *str, size_t str_len)
@@ -45,7 +44,7 @@ char *get_best_english_match(buf_t buf1, size_t buf1_len, char *out, int *max_sc
     int scores[NUM_CANDIDATES];
     for (int c = 0; c < NUM_CANDIDATES; c++)
     {
-        uint8_t chr = (uint8_t)c;
+        byte_t chr = (byte_t)c;
         buf_t buf3 = repeating_key_xor(buf1, buf1_len, &chr, 1);
         char *buf3_ascii = (char *)buf3;
         candidate_bufs[c] = buf3_ascii;

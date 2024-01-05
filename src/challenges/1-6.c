@@ -56,7 +56,7 @@ int main(int argc, char const *argv[])
     int candidate_keysize = arg_min_d(keysizes, keysizes_len, &min_keysize) + MIN_KEYSIZE;
     printf("candidate keysize: %d, (score: %f)\n", candidate_keysize, min_keysize);
 
-    uint8_t *key = malloc(candidate_keysize + 1);
+    byte_t *key = malloc(candidate_keysize + 1);
     for (int i = 0; i < candidate_keysize; i++)
     {
         size_t block_len;
@@ -64,7 +64,7 @@ int main(int argc, char const *argv[])
         char key_chr;
         int max_score;
         get_best_english_match(block, block_len, &key_chr, &max_score);
-        key[i] = (uint8_t)key_chr;
+        key[i] = (byte_t)key_chr;
     }
 
     printf("key: %s\n", key);

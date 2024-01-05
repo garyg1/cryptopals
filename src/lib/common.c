@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-typedef uint8_t *buf_t;
+typedef unsigned char byte_t;
+typedef byte_t *buf_t;
 
 int arg_max(int *arr, size_t len, int *value)
 {
@@ -218,10 +219,21 @@ void fill_char(char *str, char c, int n)
     }
 }
 
-void fill_byte(buf_t str, uint8_t c, int n)
+void fill_byte(buf_t str, byte_t c, int n)
 {
     for (int i = 0; i < n; i++)
     {
         str[i] = c;
     }
+}
+
+buf_t xor_buffers(buf_t b1, buf_t b2, size_t len)
+{
+    buf_t result = malloc(len);
+    for (int i = 0; i < len; i++)
+    {
+        result[i] = b1[i] ^ b2[i];
+    }
+
+    return result;
 }
