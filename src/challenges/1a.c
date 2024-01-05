@@ -6,9 +6,8 @@ int main(int argc, char **argv)
 {
     char *input = NULL;
     size_t len;
-    int input_len;
 
-    input_len = getline(&input, &len, stdin);
+    int input_len = getline(&input, &len, stdin);
     if (input_len == -1)
     {
         return 1;

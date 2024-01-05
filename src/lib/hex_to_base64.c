@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 
 const char *HEX_LOOKUP = "0123456789abcdef";
