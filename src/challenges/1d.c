@@ -24,8 +24,12 @@ int main(int argc, char const *argv[])
     int scores[1000];
     while ((read = getline(&line, &len, fp)) != -1)
     {
+        buf_t buf1;
+        size_t buf1_len;
+        buf1 = hex_to_bytes(line, read - 1, &buf1_len);
+        
         int score;
-        char *ans = get_best_english_match(line, read - 1, &chr, &score);
+        char *ans = get_best_english_match(buf1, buf1_len, &chr, &score);
         candidates[line_idx] = ans;
         scores[line_idx] = score;
 
