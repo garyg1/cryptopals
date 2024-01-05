@@ -150,7 +150,7 @@ buf_t base64_to_bytes(char *base64, size_t base64_len, size_t *bytes_len)
             break;
         }
         int chr_value = from_b64(chr);
-        printf("char value %d\n", chr_value);
+
         if (chr_value == -1)
         {
             continue;
