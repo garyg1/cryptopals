@@ -15,7 +15,9 @@ int main(int argc, char const *argv[])
 
     fp = fopen("./1-4.txt", "r");
     if (fp == NULL)
+    {
         exit(EXIT_FAILURE);
+    }
 
     int line_idx = 0;
     char *candidates[1000];
