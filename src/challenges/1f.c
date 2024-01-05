@@ -75,6 +75,7 @@ int main(int argc, char const *argv[])
 
     const int MIN_KEYSIZE = 2;
     const int MAX_KEYSIZE = 40;
+    const int NUM_SAMPLE_CHUNKS = 20;
     double keysizes[MAX_KEYSIZE - MIN_KEYSIZE];
     int keysizes_len = MAX_KEYSIZE - MIN_KEYSIZE;
     for (int keysize = MIN_KEYSIZE; keysize <= MAX_KEYSIZE; keysize++)
@@ -82,7 +83,7 @@ int main(int argc, char const *argv[])
         buf_t chunk1 = malloc(keysize);
         buf_t chunk2 = malloc(keysize);
         keysizes[keysize - MIN_KEYSIZE] = 0;
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < NUM_SAMPLE_CHUNKS; i++)
         {
             memcpy(chunk1, &bytes[keysize * i], keysize);
             memcpy(chunk2, &bytes[keysize * (i + 1)], keysize);
