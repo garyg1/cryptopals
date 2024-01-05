@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdlib.h>
 
 uint8_t *xor_buffers(uint8_t *b1, uint8_t *b2, size_t len)
