@@ -209,3 +209,19 @@ bool are_bytes_equal(buf_t buf1, buf_t buf2, size_t size)
     }
     return true;
 }
+
+void fill_char(char *str, char c, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        str[i] = c;
+    }
+}
+
+void fill_byte(buf_t str, uint8_t c, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        str[i] = c;
+    }
+}

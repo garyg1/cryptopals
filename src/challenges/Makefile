@@ -1,7 +1,7 @@
 CC=clang
-CFLAGS= -Wall -O2 -L/opt/homebrew/opt/openssl@3/lib -I/opt/homebrew/opt/openssl@3/include -lssl -lcrypto
+CFLAGS= -Wall -L/opt/homebrew/opt/openssl@3/lib -I/opt/homebrew/opt/openssl@3/include -lssl -lcrypto
 
-all: 1a 1b 1c 1d 1e 1f 1g 1h
+all: 1a 1b 1c 1d 1e 1f 1g 1h 2a
 
 1a:
 	$(CC) $(CFLAGS) 1a.c -o 1a.exe
@@ -19,6 +19,8 @@ all: 1a 1b 1c 1d 1e 1f 1g 1h
 	$(CC) $(CFLAGS) 1g.c -o 1g.exe
 1h:
 	$(CC) $(CFLAGS) 1h.c -o 1h.exe
+2a:
+	$(CC) $(CFLAGS) 2a.c -o 2a.exe
 
 clean:
 	rm -f *.exe
