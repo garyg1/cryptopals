@@ -5,8 +5,7 @@
 #include <stdbool.h>
 #include "./hex_to_base64.c"
 #include "./xor_buffers.c"
-
-typedef uint8_t *buf_t;
+#include "./common.c"
 
 int arg_max(int *arr, size_t len, int *value)
 {
@@ -31,7 +30,7 @@ int arg_max(int *arr, size_t len, int *value)
 
 bool is_alpha(char c)
 {
-    return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9' || c == ' ';
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == ' ';
 }
 
 int english_score(char *str, size_t str_len)
@@ -51,10 +50,24 @@ int english_score(char *str, size_t str_len)
     return score;
 }
 
+buf_t repeating_key_xor(buf_t buf1, size_t buf1_len, buf_t chars, size_t chars_len)
+{
+    buf_t buf2 = malloc(buf1_len);
+    int chars_i = 0;
+    for (int i = 0; i < buf1_len; i++)
+    {
+        buf2[i] = chars[chars_i];
+        chars_i = (chars_i + 1) % chars_len;
+    }
+
+    buf_t buf3 = xor_buffers(buf1, buf2, buf1_len);
+    return buf3;
+}
+
 char *get_best_english_match(char *x, size_t x_len, char *out, int *max_score)
 {
-    buf_t buf1, buf2;
-    size_t buf1_len, buf2_len;
+    buf_t buf1;
+    size_t buf1_len;
     buf1 = hex_to_bytes(x, x_len, &buf1_len);
 
     const int NUM_CANDIDATES = 256;
@@ -62,13 +75,8 @@ char *get_best_english_match(char *x, size_t x_len, char *out, int *max_score)
     int scores[NUM_CANDIDATES];
     for (int c = 0; c < NUM_CANDIDATES; c++)
     {
-        buf2 = malloc(buf1_len);
-        for (int i = 0; i < buf1_len; i++)
-        {
-            buf2[i] = c;
-        }
-
-        buf_t buf3 = xor_buffers(buf1, buf2, buf1_len);
+        uint8_t chr = (uint8_t) c;
+        buf_t buf3 = repeating_key_xor(buf1, buf1_len, &chr, 1);
         char *buf3_ascii = (char *)buf3;
         candidate_bufs[c] = buf3_ascii;
         scores[c] = english_score(buf3_ascii, buf1_len);

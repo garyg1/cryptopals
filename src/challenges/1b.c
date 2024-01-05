@@ -14,6 +14,7 @@ int main(int argc, char const *argv[])
 
     buf_t buf3 = xor_buffers(buf1, buf2, buf1_len);
 
-    char *buf3_hex = bytes_to_hex(buf3, buf1_len);
+    size_t buf3_hex_len;
+    char *buf3_hex = bytes_to_hex(buf3, buf1_len, &buf3_hex_len);
     printf("%s\n", buf3_hex);
 }

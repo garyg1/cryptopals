@@ -1,10 +1,11 @@
 #pragma once
 
 #include <stdlib.h>
+#include "./common.c"
 
-uint8_t *xor_buffers(uint8_t *b1, uint8_t *b2, size_t len)
+buf_t xor_buffers(buf_t b1, buf_t b2, size_t len)
 {
-    uint8_t *result = malloc(len);
+    buf_t result = malloc(len);
     for (int i = 0; i < len; i++)
     {
         result[i] = b1[i] ^ b2[i];

@@ -1,0 +1,15 @@
+CC=clang
+CFLAGS= -c -Wall
+
+all: 1a 1b 1c 1d 1e
+
+1a:
+	$(CC) $(CFLAGS) 1a.c -o 1a.exe
+1b:
+	$(CC) $(CFLAGS) 1b.c -o 1b.exe
+1c:
+	$(CC) $(CFLAGS) 1c.c -o 1c.exe
+1d:
+	$(CC) $(CFLAGS) 1d.c -o 1d.exe
+1e:
+	$(CC) $(CFLAGS) 1e.c -o 1e.exe

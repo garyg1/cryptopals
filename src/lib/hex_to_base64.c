@@ -41,15 +41,16 @@ uint8_t *hex_to_bytes(char *hex, size_t hex_len, size_t *bytes_len)
     return bytes;
 }
 
-char *bytes_to_hex(uint8_t *bytes, size_t size)
+char *bytes_to_hex(uint8_t *bytes, size_t size, size_t* hex_len)
 {
-    char *hex = malloc(size * 2 * sizeof(char));
+    char *hex = calloc(size * 2 + 1, sizeof(char));
     for (size_t i = 0; i < size; i++)
     {
         hex[2 * i] = to_chr((bytes[i] & 0xf0) >> 4);
         hex[2 * i + 1] = to_chr(bytes[i] & 0x0f);
     }
-
+    *hex_len = size * 2;
+    hex[size * 2] = '\0';
     return hex;
 }
 
