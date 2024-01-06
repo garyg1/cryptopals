@@ -136,6 +136,26 @@ bool try_detect_ecb(unsigned char *ciphertext, size_t ciphertext_len)
     return false;
 }
 
+bool try_detect_ecb2(unsigned char *ciphertext, size_t ciphertext_len, int *segment_i, int *segment_j)
+{
+    const size_t CIPHER_SIZE = AES_128_BLOCK_SIZE_BYTES;
+    int num_segments = ciphertext_len / CIPHER_SIZE;
+    for (int i = 0; i < num_segments; i++)
+    {
+        for (int j = i + 1; j < num_segments; j++)
+        {
+            if (are_bytes_equal(ciphertext + i * CIPHER_SIZE, ciphertext + j * CIPHER_SIZE, CIPHER_SIZE))
+            {
+                *segment_i = i;
+                *segment_j = j;
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 buf_t random_aes128_key()
 {
     return random_bytes(AES_128_KEY_SIZE_BYTES);
