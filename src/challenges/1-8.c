@@ -3,25 +3,8 @@
 #include <string.h>
 #include <unistd.h>
 #include "../lib/common.c"
+#include "../lib/crypto.c"
 #include "../lib/hex_to_base64.c"
-
-bool try_detect_ecb(unsigned char *ciphertext, size_t ciphertext_len)
-{
-    const int CIPHER_SIZE = 128 / 8;
-    int num_segments = ciphertext_len / CIPHER_SIZE;
-    for (int i = 0; i < num_segments; i++)
-    {
-        for (int j = i + 1; j < num_segments; j++)
-        {
-            if (are_bytes_equal(ciphertext + i * CIPHER_SIZE, ciphertext + j * CIPHER_SIZE, CIPHER_SIZE))
-            {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
 
 int main(int argc, char const *argv[])
 {

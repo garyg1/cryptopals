@@ -237,3 +237,61 @@ buf_t xor_buffers(buf_t b1, buf_t b2, size_t len)
 
     return result;
 }
+
+buf_t random_bytes(size_t n)
+{
+    buf_t result = malloc(n);
+    size_t len = n / 4;
+    for (int i = 0; i < len; i++)
+    {
+        int r = rand();
+        result[4 * i] = r & 0xff;
+        result[4 * i + 1] = (r >> 8) & 0xff;
+        result[4 * i + 2] = (r >> 16) & 0xff;
+        result[4 * i + 3] = (r >> 24) & 0xff;
+    }
+
+    if (n % 4 > 0)
+    {
+        int r = rand();
+        switch (n % 4)
+        {
+        case 3:
+            result[4 * len + 2] = (r >> 16) & 0xff;
+        case 2:
+            result[4 * len + 1] = (r >> 8) & 0xff;
+        case 1:
+            result[4 * len] = r & 0xff;
+            break;
+        }
+    }
+    return result;
+}
+
+int randrange(int lo, int hi)
+{
+    int r = rand();
+    return (r % (hi - lo)) + lo;
+}
+
+bool rand_bool()
+{
+    return randrange(0, 2) == 1;
+}
+
+buf_t concat_buffers(buf_t b1, size_t b1_len, buf_t b2, size_t b2_len)
+{
+    buf_t out = malloc(b1_len + b2_len);
+    memcpy(out, b1, b1_len);
+    memcpy(out + b1_len, b2, b2_len);
+    return out;
+}
+
+buf_t concat_buffers3(buf_t b1, size_t b1_len, buf_t b2, size_t b2_len, buf_t b3, size_t b3_len)
+{
+    buf_t out = malloc(b1_len + b2_len + b3_len);
+    memcpy(out, b1, b1_len);
+    memcpy(out + b1_len, b2, b2_len);
+    memcpy(out + b1_len + b2_len, b3, b3_len);
+    return out;
+}
