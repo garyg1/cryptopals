@@ -344,3 +344,80 @@ int min(int a, int b)
 {
     return (a < b) ? a : b;
 }
+
+struct string_dict
+{
+    size_t len;
+    buf_t *keys;
+    size_t *key_lens;
+    buf_t *values;
+    size_t *value_lens;
+};
+
+bool try_parse_kv(buf_t kv, size_t kv_len, struct string_dict *out)
+{
+    const byte_t EQ = '=';
+    const byte_t SEP = '&';
+
+    size_t kv_count = 1;
+    for (int i = 0; i < kv_len; i++)
+    {
+        if (kv[i] == SEP)
+        {
+            kv_count += 1;
+        }
+    }
+
+    out->keys = calloc(kv_count, sizeof(buf_t *));
+    out->values = calloc(kv_count, sizeof(buf_t *));
+    out->key_lens = calloc(kv_count, sizeof(buf_t *));
+    out->value_lens = calloc(kv_count, sizeof(buf_t *));
+    out->len = kv_count;
+
+    byte_t curr_token[1000] = {0};
+    int curr_token_i = 0;
+    int curr_kv_i = 0;
+
+    for (int i = 0; i < kv_len; i++)
+    {
+        char c = kv[i];
+        if (c == EQ)
+        {
+            out->keys[curr_kv_i] = malloc(curr_token_i + 1);
+            memcpy(out->keys[curr_kv_i], curr_token, curr_token_i);
+            out->keys[curr_kv_i][curr_token_i] = '\0';
+            out->key_lens[curr_kv_i] = curr_token_i;
+            curr_token_i = 0;
+        }
+        else if (c == SEP)
+        {
+            out->values[curr_kv_i] = malloc(curr_token_i + 1);
+            memcpy(out->values[curr_kv_i], curr_token, curr_token_i);
+            out->values[curr_kv_i][curr_token_i] = '\0';
+            out->value_lens[curr_kv_i] = curr_token_i;
+            curr_token_i = 0;
+            curr_kv_i += 1;
+        }
+        else
+        {
+            curr_token[curr_token_i++] = c;
+        }
+    }
+
+    // last kv
+    out->values[curr_kv_i] = malloc(curr_token_i);
+    memcpy(out->values[curr_kv_i], curr_token, curr_token_i);
+    out->value_lens[curr_kv_i] = curr_token_i;
+
+    return true;
+}
+
+void print_string_dict(struct string_dict *dict)
+{
+    printf("{\n");
+    for (int i = 0; i < dict->len; i++)
+    {
+        printf("\t%s (%d): '%s' (%d),\n", dict->keys[i], dict->key_lens[i], dict->values[i], dict->value_lens[i]);
+    }
+    printf("}\n");
+}
