@@ -27,6 +27,28 @@ buf_t unpad_pkcs7(buf_t buf, size_t buf_len, size_t block_size, size_t *unpadded
     return buffer_substring(buf, buf_len - num_chars);
 }
 
+bool try_unpad_pkcs7(buf_t buf, size_t buf_len, size_t block_size, buf_t *unpadded, size_t *unpadded_len)
+{
+    size_t num_chars = (size_t)buf[buf_len - 1];
+    if (num_chars > buf_len)
+    {
+        return false;
+    }
+
+    for (int i = 0; i < num_chars; i++)
+    {
+        size_t buf_idx = buf_len - i - 1;
+        if (buf[buf_idx] != (byte_t)num_chars)
+        {
+            return false;
+        }
+    }
+    *unpadded_len = buf_len - num_chars;
+    *unpadded = buffer_substring(buf, buf_len - num_chars);
+
+    return true;
+}
+
 const size_t AES_128_BLOCK_SIZE_BYTES = 16;
 const size_t AES_128_KEY_SIZE_BYTES = 16;
 
