@@ -182,10 +182,6 @@ char **read_lines_from_file(char *filename, size_t *num_lines)
     while ((read = getline(&line, &len, fp)) != -1)
     {
         lines[line_idx] = strdup(line);
-        if (line[read - 1] == '\n')
-        {
-            read -= 1;
-        }
         line_idx += 1;
     }
 
