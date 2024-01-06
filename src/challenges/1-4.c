@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "../lib/hex_to_base64.c"
+#include "../lib/encoding.c"
 #include "../lib/english_match.c"
 
 int main(int argc, char const *argv[])

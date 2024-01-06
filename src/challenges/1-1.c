@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../lib/hex_to_base64.c"
+#include "../lib/encoding.c"
 
 int main(int argc, char **argv)
 {

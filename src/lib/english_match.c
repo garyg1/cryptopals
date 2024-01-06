@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "./hex_to_base64.c"
+#include "./encoding.c"
 #include "./common.c"
 
 int english_score(char *str, size_t str_len)

@@ -91,7 +91,7 @@ int arg_min_d(double *arr, size_t len, double *value)
 
 bool is_alpha(char c)
 {
-    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ';
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ' || c == '\'';
 }
 
 int get_english_freq_score(char c)

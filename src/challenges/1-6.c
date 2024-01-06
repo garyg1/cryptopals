@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "../lib/edit_distance.c"
-#include "../lib/hex_to_base64.c"
+#include "../lib/encoding.c"
 #include "../lib/common.c"
 #include "../lib/english_match.c"
 

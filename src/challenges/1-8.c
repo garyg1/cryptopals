@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include "../lib/common.c"
 #include "../lib/crypto.c"
-#include "../lib/hex_to_base64.c"
+#include "../lib/encoding.c"
 
 int main(int argc, char const *argv[])
 {
