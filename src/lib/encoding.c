@@ -135,7 +135,7 @@ char *bytes_to_base64(buf_t bytes, size_t bytes_len, size_t *base64_len)
     return base64_result;
 }
 
-buf_t base64_to_bytes(char *base64, size_t base64_len, size_t *bytes_len)
+buf_t base64_to_bytes(const char *base64, size_t base64_len, size_t *bytes_len)
 {
     size_t max_bytes_len = base64_len * 6 / 8;
     buf_t bytes = (buf_t) calloc(max_bytes_len, 1);

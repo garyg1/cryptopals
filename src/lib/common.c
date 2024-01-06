@@ -275,7 +275,17 @@ bool rand_bool()
     return randrange(0, 2) == 1;
 }
 
-buf_t concat_buffers(buf_t b1, size_t b1_len, buf_t b2, size_t b2_len)
+buf_t repeat_buffer(const buf_t b1, size_t b1_len, int times)
+{
+    buf_t out = malloc(b1_len * times);
+    for (int i = 0; i < times; i++)
+    {
+        memcpy(out + (i * b1_len), b1, b1_len);
+    }
+    return out;
+}
+
+buf_t concat_buffers2(const buf_t b1, size_t b1_len, const buf_t b2, size_t b2_len)
 {
     buf_t out = malloc(b1_len + b2_len);
     memcpy(out, b1, b1_len);
@@ -283,11 +293,54 @@ buf_t concat_buffers(buf_t b1, size_t b1_len, buf_t b2, size_t b2_len)
     return out;
 }
 
-buf_t concat_buffers3(buf_t b1, size_t b1_len, buf_t b2, size_t b2_len, buf_t b3, size_t b3_len)
+buf_t concat_buffers3(const buf_t b1, size_t b1_len, const buf_t b2, size_t b2_len, const buf_t b3, size_t b3_len)
 {
     buf_t out = malloc(b1_len + b2_len + b3_len);
     memcpy(out, b1, b1_len);
     memcpy(out + b1_len, b2, b2_len);
     memcpy(out + b1_len + b2_len, b3, b3_len);
     return out;
+}
+
+buf_t concat_buffers4(const buf_t b1, size_t b1_len, const buf_t b2, size_t b2_len, const buf_t b3, size_t b3_len, const buf_t b4, size_t b4_len)
+{
+    buf_t out = malloc(b1_len + b2_len + b3_len + b4_len);
+    memcpy(out, b1, b1_len);
+    memcpy(out + b1_len, b2, b2_len);
+    memcpy(out + b1_len + b2_len, b3, b3_len);
+    memcpy(out + b1_len + b2_len + b3_len, b4, b4_len);
+    return out;
+}
+
+bool get_bit(buf_t buf, int bit_idx)
+{
+    int offset = bit_idx / 8;
+    byte_t mask = 0b10000000 >> (bit_idx % 8);
+    return (buf[offset] & mask) != 0;
+}
+
+void set_bit(buf_t buf, int bit_idx, bool bit)
+{
+    byte_t mask = 0b10000000 >> (bit_idx % 8);
+    int offset = bit_idx / 8;
+
+    if (!bit)
+    {
+        mask = ~mask;
+        *(buf + offset) = *(buf + offset) & mask;
+    }
+    else
+    {
+        buf[offset] |= mask;
+    }
+}
+
+int max(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+int min(int a, int b)
+{
+    return (a < b) ? a : b;
 }

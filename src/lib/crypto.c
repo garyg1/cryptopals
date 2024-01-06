@@ -105,7 +105,7 @@ buf_t encrypt_aes128_ecb(buf_t unpadded_plaintext, size_t unpadded_plaintext_len
 
 bool try_detect_ecb(unsigned char *ciphertext, size_t ciphertext_len)
 {
-    const int CIPHER_SIZE = 128 / 8;
+    const size_t CIPHER_SIZE = AES_128_BLOCK_SIZE_BYTES;
     int num_segments = ciphertext_len / CIPHER_SIZE;
     for (int i = 0; i < num_segments; i++)
     {

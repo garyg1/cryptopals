@@ -15,6 +15,7 @@ challenges:
 	$(CC) $(CFLAGS) 2-1.c -o 2-1.exe
 	$(CC) $(CFLAGS) 2-2.c -o 2-2.exe
 	$(CC) $(CFLAGS) 2-3.c -o 2-3.exe
+	$(CC) $(CFLAGS) 2-4.c -o 2-4.exe
 
 clean:
 	rm -f *.exe
