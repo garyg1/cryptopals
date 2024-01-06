@@ -285,6 +285,13 @@ buf_t repeat_buffer(const buf_t b1, size_t b1_len, int times)
     return out;
 }
 
+buf_t buffer_substring(const buf_t b1, size_t len)
+{
+    buf_t out = malloc(len);
+    memcpy(out, b1, len);
+    return out;
+}
+
 buf_t concat_buffers2(const buf_t b1, size_t b1_len, const buf_t b2, size_t b2_len)
 {
     buf_t out = malloc(b1_len + b2_len);
@@ -414,10 +421,10 @@ bool try_parse_kv(buf_t kv, size_t kv_len, struct string_dict *out)
 
 void print_string_dict(struct string_dict *dict)
 {
-    printf("{\n");
+    printf("(%zu)\n{\n", dict->len);
     for (int i = 0; i < dict->len; i++)
     {
-        printf("\t%s (%d): '%s' (%d),\n", dict->keys[i], dict->key_lens[i], dict->values[i], dict->value_lens[i]);
+        printf("\t%s (%zu): '%s' (%zu),\n", dict->keys[i], dict->key_lens[i], dict->values[i], dict->value_lens[i]);
     }
     printf("}\n");
 }

@@ -20,6 +20,13 @@ buf_t pad_pkcs7(buf_t buf, size_t buf_len, size_t block_size, size_t *padded_len
     return out;
 }
 
+buf_t unpad_pkcs7(buf_t buf, size_t buf_len, size_t block_size, size_t *unpadded_len)
+{
+    size_t num_chars = (size_t)buf[buf_len - 1];
+    *unpadded_len = buf_len - num_chars;
+    return buffer_substring(buf, buf_len - num_chars);
+}
+
 const size_t AES_128_BLOCK_SIZE_BYTES = 16;
 const size_t AES_128_KEY_SIZE_BYTES = 16;
 
@@ -63,6 +70,14 @@ buf_t decrypt_aes128_cbc(buf_t ciphertext, size_t ciphertext_len, buf_t key, buf
 
     *plaintext_len = ciphertext_len;
     return out;
+}
+
+buf_t decrypt_aes128_cbc_unpad(buf_t ciphertext, size_t ciphertext_len, buf_t key, buf_t iv, size_t *plaintext_len)
+{
+    size_t padded_len;
+    buf_t padded = decrypt_aes128_cbc(ciphertext, ciphertext_len, key, iv, &padded_len);
+
+    return unpad_pkcs7(padded, padded_len, AES_128_BLOCK_SIZE_BYTES, plaintext_len);
 }
 
 buf_t encrypt_aes128_cbc(buf_t unpadded_plaintext, size_t unpadded_plaintext_len, buf_t key, buf_t iv, size_t *ciphertext_len)
@@ -119,4 +134,15 @@ bool try_detect_ecb(unsigned char *ciphertext, size_t ciphertext_len)
     }
 
     return false;
+}
+
+buf_t random_aes128_key()
+{
+    return random_bytes(AES_128_KEY_SIZE_BYTES);
+}
+
+buf_t zero_iv()
+{
+    buf_t b = (buf_t) "\x00";
+    return repeat_buffer(b, 1, 16);
 }
