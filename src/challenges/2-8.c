@@ -5,8 +5,8 @@
 #include "../lib/common.c"
 #include "../lib/crypto.c"
 
-buf_t key;
-buf_t iv;
+static buf_t key;
+static buf_t iv;
 
 void init_encryption_oracle()
 {
