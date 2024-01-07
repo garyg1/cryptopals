@@ -183,6 +183,11 @@ buf_t random_aes128_key()
     return random_bytes(AES_128_KEY_SIZE_BYTES);
 }
 
+buf_t random_aes128_iv()
+{
+    return random_bytes(AES_128_BLOCK_SIZE_BYTES);
+}
+
 buf_t zero_iv()
 {
     buf_t b = (buf_t) "\x00";
