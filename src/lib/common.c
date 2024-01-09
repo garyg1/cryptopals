@@ -234,6 +234,16 @@ buf_t xor_buffers(buf_t b1, buf_t b2, size_t len)
     return result;
 }
 
+buf_t xor_buffer_inplace(buf_t result, buf_t b1, buf_t b2, size_t len)
+{
+    for (int i = 0; i < len; i++)
+    {
+        result[i] = b1[i] ^ b2[i];
+    }
+
+    return result;
+}
+
 buf_t random_bytes(size_t n)
 {
     buf_t result = malloc(n);
@@ -290,6 +300,11 @@ buf_t buffer_substring(const buf_t b1, size_t len)
     buf_t out = malloc(len);
     memcpy(out, b1, len);
     return out;
+}
+
+buf_t copy_buffer(const buf_t b1, size_t len)
+{
+    return buffer_substring(b1, len);
 }
 
 buf_t concat_buffers2(const buf_t b1, size_t b1_len, const buf_t b2, size_t b2_len)

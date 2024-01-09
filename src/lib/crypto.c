@@ -7,6 +7,7 @@
 #include <openssl/aes.h>
 #include <openssl/ssl.h>
 #include "./common.c"
+#include "./encoding.c"
 
 buf_t pad_pkcs7(buf_t buf, size_t buf_len, size_t block_size, size_t *padded_len)
 {
@@ -35,10 +36,16 @@ bool try_unpad_pkcs7(buf_t buf, size_t buf_len, size_t block_size, buf_t *unpadd
         return false;
     }
 
+    if (num_chars == 0)
+    {
+        return false;
+    }
+
+    byte_t expected_value = (byte_t)num_chars;
     for (int i = 0; i < num_chars; i++)
     {
         size_t buf_idx = buf_len - i - 1;
-        if (buf[buf_idx] != (byte_t)num_chars)
+        if (buf[buf_idx] != expected_value)
         {
             return false;
         }
@@ -108,6 +115,8 @@ buf_t encrypt_aes128_cbc(buf_t unpadded_plaintext, size_t unpadded_plaintext_len
     buf_t plaintext = pad_pkcs7(unpadded_plaintext, unpadded_plaintext_len, AES_128_BLOCK_SIZE_BYTES, &plaintext_len);
     int num_blocks = plaintext_len / AES_128_BLOCK_SIZE_BYTES;
 
+    size_t _discard;
+    printf("padded plaintext: %s\n", bytes_to_hex(plaintext, plaintext_len, &_discard));
     buf_t prev = iv;
     buf_t out = calloc(num_blocks * AES_128_BLOCK_SIZE_BYTES, 1);
     for (int i = 0; i < num_blocks; i++)
