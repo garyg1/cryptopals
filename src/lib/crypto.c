@@ -51,7 +51,8 @@ bool try_unpad_pkcs7(buf_t buf, size_t buf_len, size_t block_size, buf_t *unpadd
         }
     }
     *unpadded_len = buf_len - num_chars;
-    *unpadded = buffer_substring(buf, buf_len - num_chars);
+    *unpadded = buffer_substring(buf, buf_len - num_chars + 1);
+    (*unpadded)[buf_len - num_chars] = '\0';
 
     return true;
 }

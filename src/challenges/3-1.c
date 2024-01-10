@@ -34,6 +34,8 @@ void encryption_oracle(buf_t *ciphertext, size_t *ciphertext_len, buf_t *iv, int
 
     *iv = random_aes128_iv();
     *ciphertext = encrypt_aes128_cbc(plaintext, plaintext_len, m_key, *iv, ciphertext_len);
+
+    free(plaintext);
 }
 
 bool padding_oracle(buf_t ciphertext, size_t ciphertext_len, buf_t iv)
@@ -41,9 +43,15 @@ bool padding_oracle(buf_t ciphertext, size_t ciphertext_len, buf_t iv)
     size_t plaintext_len;
     buf_t plaintext = decrypt_aes128_cbc(ciphertext, ciphertext_len, m_key, iv, &plaintext_len);
 
-    buf_t unpadded;
+    buf_t unpadded = NULL;
     size_t unpadded_len;
     bool is_valid = try_unpad_pkcs7(plaintext, plaintext_len, AES_128_BLOCK_SIZE_BYTES, &unpadded, &unpadded_len);
+
+    free(plaintext);
+    if (unpadded != NULL)
+    {
+        free(unpadded);
+    }
 
     return is_valid;
 }
@@ -57,10 +65,10 @@ buf_t decode_one_block(const buf_t ciphertext, size_t ciphertext_len, const buf_
     buf_t known_guesses = calloc(ciphertext_len + 1, 1);
     known_guesses[ciphertext_len] = '\0';
 
+    size_t ciphertext_and_iv_len = BLOCK_SIZE + ciphertext_len;
     buf_t ciphertext_and_iv = concat_buffers2(
         iv, BLOCK_SIZE,
         ciphertext, ciphertext_len);
-    size_t ciphertext_and_iv_len = BLOCK_SIZE + ciphertext_len;
     buf_t modified_ciphertext_and_iv = copy_buffer(ciphertext_and_iv, ciphertext_and_iv_len);
 
     for (int i = 0; i < BLOCK_SIZE; i++)
@@ -74,9 +82,10 @@ buf_t decode_one_block(const buf_t ciphertext, size_t ciphertext_len, const buf_
             if (padding_oracle(modified_ciphertext_and_iv + BLOCK_SIZE, ciphertext_len, modified_ciphertext_and_iv))
             {
                 byte_t known_byte = ciphertext_and_iv[ciphertext_idx] ^ guess_byte ^ target_byte;
-                if (known_byte == 0x01)
+                // if first byte there are two matches (1) 0x01 and (2) the existing padding
+                if (i == 0 && known_byte == 0x01)
                 {
-                    continue;
+                    known_byte = target_byte;
                 }
 
                 known_plaintext[BLOCK_SIZE - i - 1] = known_byte;
@@ -86,13 +95,19 @@ buf_t decode_one_block(const buf_t ciphertext, size_t ciphertext_len, const buf_
             }
         }
 
+        // set masked guesses to new target suffix (e.g., \x04\x04\x04)
         for (int i = 0; i < known_plaintext_len; i++)
         {
-            // set masked guesses to new target suffix (e.g., \x04\x04\x04)
-            byte_t new_guess = known_guesses[ciphertext_idx + i] ^ (known_plaintext_len - i) ^ (known_plaintext_len + 1);
+            byte_t old_target = known_plaintext_len - i;
+            byte_t new_target = known_plaintext_len + 1;
+            byte_t new_guess = known_guesses[ciphertext_idx + i] ^ old_target ^ new_target;
             modified_ciphertext_and_iv[BLOCK_SIZE + ciphertext_idx + i - BLOCK_SIZE] = new_guess;
         }
     }
+
+    free(known_guesses);
+    free(ciphertext_and_iv);
+    free(modified_ciphertext_and_iv);
 
     return known_plaintext;
 }
@@ -116,13 +131,23 @@ void do_attack()
             buf_t plaintext_chunk = decode_one_block(ciphertext, i, iv);
             memcpy(plaintext + plaintext_len, plaintext_chunk, BLOCK_SIZE);
             plaintext_len += BLOCK_SIZE;
+
+            free(plaintext_chunk);
         }
 
-        buf_t unpadded_plaintext;
+        buf_t unpadded_plaintext = NULL;
         size_t unpadded_plaintext_len;
         try_unpad_pkcs7(plaintext, plaintext_len, BLOCK_SIZE, &unpadded_plaintext, &unpadded_plaintext_len);
 
         printf("[%d] %s\n", test_case, unpadded_plaintext);
+
+        free(plaintext);
+        free(ciphertext);
+        free(iv);
+        if (unpadded_plaintext != NULL)
+        {
+            free(unpadded_plaintext);
+        }
     }
 }
 
