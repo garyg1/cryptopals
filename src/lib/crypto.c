@@ -59,6 +59,8 @@ bool try_unpad_pkcs7(buf_t buf, size_t buf_len, size_t block_size, buf_t *unpadd
 
 const size_t AES_128_BLOCK_SIZE_BYTES = 16;
 const size_t AES_128_KEY_SIZE_BYTES = 16;
+const size_t AES_128_CTR_NONCE_SIZE_BYTES = 8;
+const size_t AES_128_CTR_BLOCKCOUNT_SIZE_BYTES = 8;
 
 buf_t decrypt_block_aes128(buf_t buf, buf_t key)
 {
@@ -77,6 +79,16 @@ buf_t encrypt_block_aes128(buf_t buf, buf_t key)
     AES_set_encrypt_key(key, AES_128_KEY_SIZE_BYTES * 8, &enc_key);
 
     buf_t out = calloc(AES_128_BLOCK_SIZE_BYTES, 1);
+    AES_encrypt(buf, out, &enc_key);
+
+    return out;
+}
+
+buf_t encrypt_block_aes128_inplace(buf_t buf, buf_t key, buf_t out)
+{
+    AES_KEY enc_key;
+    AES_set_encrypt_key(key, AES_128_KEY_SIZE_BYTES * 8, &enc_key);
+
     AES_encrypt(buf, out, &enc_key);
 
     return out;
@@ -186,6 +198,44 @@ bool try_detect_ecb2(unsigned char *ciphertext, size_t ciphertext_len, int *segm
     return false;
 }
 
+void encrypt_aes128_ctr(buf_t plaintext, size_t plaintext_len, buf_t key, buf_t nonce, buf_t ciphertext)
+{
+    int num_blocks = (plaintext_len + AES_128_BLOCK_SIZE_BYTES - 1) / AES_128_BLOCK_SIZE_BYTES;
+
+    byte_t encrypted_ctr[AES_128_BLOCK_SIZE_BYTES];
+    byte_t ctr[AES_128_BLOCK_SIZE_BYTES];
+    memcpy(ctr, nonce, AES_128_BLOCK_SIZE_BYTES);
+
+    for (int i = 0; i < num_blocks; i++)
+    {
+        encrypt_block_aes128_inplace(ctr, key, encrypted_ctr);
+        size_t offset = i * AES_128_BLOCK_SIZE_BYTES;
+        size_t curr_block_len = min(AES_128_BLOCK_SIZE_BYTES, plaintext_len - offset);
+        xor_buffer_inplace(ciphertext + offset, plaintext + offset, encrypted_ctr, curr_block_len);
+
+        increment_buffer_le(ctr + AES_128_CTR_NONCE_SIZE_BYTES, AES_128_CTR_BLOCKCOUNT_SIZE_BYTES);
+    }
+}
+
+void decrypt_aes128_ctr(buf_t ciphertext, size_t ciphertext_len, buf_t key, buf_t nonce, buf_t plaintext)
+{
+    int num_blocks = (ciphertext_len + AES_128_BLOCK_SIZE_BYTES - 1) / AES_128_BLOCK_SIZE_BYTES;
+
+    byte_t encrypted_ctr[AES_128_BLOCK_SIZE_BYTES];
+    byte_t ctr[AES_128_BLOCK_SIZE_BYTES];
+    memcpy(ctr, nonce, AES_128_BLOCK_SIZE_BYTES);
+
+    for (int i = 0; i < num_blocks; i++)
+    {
+        encrypt_block_aes128_inplace(ctr, key, encrypted_ctr);
+        size_t offset = i * AES_128_BLOCK_SIZE_BYTES;
+        size_t curr_block_len = min(AES_128_BLOCK_SIZE_BYTES, ciphertext_len - offset);
+        xor_buffer_inplace(plaintext + offset, ciphertext + offset, encrypted_ctr, curr_block_len);
+
+        increment_buffer_le(ctr + AES_128_CTR_NONCE_SIZE_BYTES, AES_128_CTR_BLOCKCOUNT_SIZE_BYTES);
+    }
+}
+
 buf_t random_aes128_key()
 {
     return random_bytes(AES_128_KEY_SIZE_BYTES);
@@ -195,6 +245,8 @@ buf_t random_aes128_iv()
 {
     return random_bytes(AES_128_BLOCK_SIZE_BYTES);
 }
+
+#define ZERO_BUFFER_16 "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 
 buf_t zero_iv()
 {

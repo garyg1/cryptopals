@@ -357,6 +357,44 @@ void set_bit(buf_t buf, int bit_idx, bool bit)
     }
 }
 
+void increment_buffer_be(buf_t buf, size_t buf_len)
+{
+    bool inc = true;
+    int i = buf_len - 1;
+    while (inc && i >= 0)
+    {
+        if (buf[i] == 0xff)
+        {
+            buf[i] = 0x00;
+            i -= 1;
+        }
+        else
+        {
+            buf[i] += 1;
+            inc = false;
+        }
+    }
+}
+
+void increment_buffer_le(buf_t buf, size_t buf_len)
+{
+    bool inc = true;
+    int i = 0;
+    while (inc && i < buf_len)
+    {
+        if (buf[i] == 0xff)
+        {
+            buf[i] = 0x00;
+            i += 1;
+        }
+        else
+        {
+            buf[i] += 1;
+            inc = false;
+        }
+    }
+}
+
 int max(int a, int b)
 {
     return (a > b) ? a : b;
