@@ -122,8 +122,7 @@ void do_attack()
     {
         encryption_oracle(&ciphertext, &ciphertext_len, &iv, test_case);
 
-        buf_t plaintext = calloc(ciphertext_len + 1, 1);
-        plaintext[ciphertext_len] = '\0';
+        buf_t plaintext = calloc(ciphertext_len, 1);
 
         size_t plaintext_len = 0;
         for (int i = BLOCK_SIZE; i <= ciphertext_len; i += BLOCK_SIZE)
