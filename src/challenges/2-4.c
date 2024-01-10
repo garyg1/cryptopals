@@ -6,14 +6,14 @@
 #include "../lib/crypto.c"
 #include "../lib/encoding.c"
 
-buf_t key;
+buf_t m_key;
 const char *unknown_string_b64 = "Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK";
 buf_t unknown_string;
 size_t unknown_string_len;
 
 void init_encryption_oracle()
 {
-    key = random_bytes(16);
+    m_key = random_bytes(16);
     unknown_string = base64_to_bytes(unknown_string_b64, 184, &unknown_string_len);
 }
 
@@ -27,12 +27,12 @@ buf_t encryption_oracle(buf_t input, size_t input_len, size_t *enc_len, bool *is
     {
         *is_ecb = false;
         buf_t iv = random_bytes(16);
-        enc = encrypt_aes128_cbc(input2, input2_len, key, iv, enc_len);
+        enc = encrypt_aes128_cbc(input2, input2_len, m_key, iv, enc_len);
     }
     else
     {
         *is_ecb = true;
-        enc = encrypt_aes128_ecb(input2, input2_len, key, enc_len);
+        enc = encrypt_aes128_ecb(input2, input2_len, m_key, enc_len);
     }
     return enc;
 }

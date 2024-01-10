@@ -115,8 +115,6 @@ buf_t encrypt_aes128_cbc(buf_t unpadded_plaintext, size_t unpadded_plaintext_len
     buf_t plaintext = pad_pkcs7(unpadded_plaintext, unpadded_plaintext_len, AES_128_BLOCK_SIZE_BYTES, &plaintext_len);
     int num_blocks = plaintext_len / AES_128_BLOCK_SIZE_BYTES;
 
-    size_t _discard;
-    printf("padded plaintext: %s\n", bytes_to_hex(plaintext, plaintext_len, &_discard));
     buf_t prev = iv;
     buf_t out = calloc(num_blocks * AES_128_BLOCK_SIZE_BYTES, 1);
     for (int i = 0; i < num_blocks; i++)

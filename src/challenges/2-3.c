@@ -6,11 +6,11 @@
 #include "../lib/crypto.c"
 #include "../lib/encoding.c"
 
-buf_t key;
+buf_t m_key;
 
 void init_encryption_oracle()
 {
-    key = random_bytes(16);
+    m_key = random_bytes(16);
 }
 
 buf_t encryption_oracle(buf_t input, size_t input_len, size_t *enc_len, bool *is_ecb)
@@ -28,12 +28,12 @@ buf_t encryption_oracle(buf_t input, size_t input_len, size_t *enc_len, bool *is
     {
         *is_ecb = false;
         buf_t iv = random_bytes(16);
-        enc = encrypt_aes128_cbc(input2, input2_len, key, iv, enc_len);
+        enc = encrypt_aes128_cbc(input2, input2_len, m_key, iv, enc_len);
     }
     else
     {
         *is_ecb = true;
-        enc = encrypt_aes128_ecb(input2, input2_len, key, enc_len);
+        enc = encrypt_aes128_ecb(input2, input2_len, m_key, enc_len);
     }
     return enc;
 }
