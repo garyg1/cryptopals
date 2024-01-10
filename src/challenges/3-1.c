@@ -38,7 +38,7 @@ void encryption_oracle(buf_t *ciphertext, size_t *ciphertext_len, buf_t *iv, int
     free(plaintext);
 }
 
-bool padding_oracle(buf_t ciphertext, size_t ciphertext_len, buf_t iv)
+bool padding_oracle(const buf_t ciphertext, size_t ciphertext_len, const buf_t iv)
 {
     size_t plaintext_len;
     buf_t plaintext = decrypt_aes128_cbc(ciphertext, ciphertext_len, m_key, iv, &plaintext_len);
