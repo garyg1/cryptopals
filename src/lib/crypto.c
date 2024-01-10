@@ -241,6 +241,11 @@ buf_t random_aes128_key()
     return random_bytes(AES_128_KEY_SIZE_BYTES);
 }
 
+void random_aes128_key_inplace(buf_t buf)
+{
+    random_bytes_inplace(buf, AES_128_BLOCK_SIZE_BYTES);
+}
+
 buf_t random_aes128_iv()
 {
     return random_bytes(AES_128_BLOCK_SIZE_BYTES);

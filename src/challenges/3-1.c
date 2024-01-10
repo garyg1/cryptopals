@@ -60,7 +60,7 @@ buf_t decode_one_block(const buf_t ciphertext, size_t ciphertext_len, const buf_
 {
     size_t known_plaintext_len = 0;
     buf_t known_plaintext = calloc(BLOCK_SIZE + 1, 1);
-    known_plaintext[ciphertext_len] = '\0';
+    known_plaintext[BLOCK_SIZE] = '\0';
 
     buf_t known_guesses = calloc(ciphertext_len + 1, 1);
     known_guesses[ciphertext_len] = '\0';

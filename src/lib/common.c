@@ -244,9 +244,8 @@ buf_t xor_buffer_inplace(buf_t result, buf_t b1, buf_t b2, size_t len)
     return result;
 }
 
-buf_t random_bytes(size_t n)
+void random_bytes_inplace(buf_t result, size_t n)
 {
-    buf_t result = malloc(n);
     size_t len = n / 4;
     for (int i = 0; i < len; i++)
     {
@@ -271,6 +270,13 @@ buf_t random_bytes(size_t n)
             break;
         }
     }
+}
+
+buf_t random_bytes(size_t n)
+{
+    buf_t result = malloc(n);
+    random_bytes_inplace(result, n);
+
     return result;
 }
 
