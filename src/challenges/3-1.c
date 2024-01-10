@@ -114,17 +114,17 @@ buf_t decode_one_block(const buf_t ciphertext, size_t ciphertext_len, const buf_
 
 void do_attack()
 {
-    size_t ciphertext_len;
-    buf_t ciphertext;
-    buf_t iv;
-
     for (int test_case = 0; test_case < 10; test_case++)
     {
+        size_t ciphertext_len;
+        buf_t ciphertext;
+        buf_t iv;
+
         encryption_oracle(&ciphertext, &ciphertext_len, &iv, test_case);
 
+        size_t plaintext_len = 0;
         buf_t plaintext = calloc(ciphertext_len, 1);
 
-        size_t plaintext_len = 0;
         for (int i = BLOCK_SIZE; i <= ciphertext_len; i += BLOCK_SIZE)
         {
             buf_t plaintext_chunk = decode_one_block(ciphertext, i, iv);
