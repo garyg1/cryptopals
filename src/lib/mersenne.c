@@ -1,4 +1,4 @@
-#pragma onces
+#pragma once
 
 // https://en.wikipedia.org/wiki/Mersenne_Twister
 const long a = 0x9908b0df;
@@ -23,7 +23,7 @@ struct mersenne_state
     int index;
 };
 
-void seed_mt(struct mersenne_state *state, long seed)
+void mt_seed(struct mersenne_state *state, long seed)
 {
     state->mt[0] = seed & d;
     for (long i = 1; i < n; i++)
@@ -33,7 +33,7 @@ void seed_mt(struct mersenne_state *state, long seed)
     state->index = n;
 }
 
-void generate_block(struct mersenne_state *state)
+static void generate_block(struct mersenne_state *state)
 {
     for (int i = 0; i < n; i++)
     {
