@@ -258,3 +258,4 @@ buf_t zero_iv()
     buf_t b = (buf_t) "\x00";
     return repeat_buffer(b, 1, 16);
 }
+
