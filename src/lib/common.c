@@ -363,6 +363,25 @@ void set_bit(buf_t buf, int bit_idx, bool bit)
     }
 }
 
+void set_bit_l(long *l, int bit_idx, bool bit)
+{
+    long mask = 0x8000000000000000 >> bit_idx;
+    if (bit)
+    {
+        *l |= mask;
+    }
+    else
+    {
+        *l &= ~mask;
+    }
+}
+
+bool get_bit_l(long l, int bit_idx)
+{
+    long mask = 0x8000000000000000 >> bit_idx;
+    return (l & mask) != 0;
+}
+
 void increment_buffer_be(buf_t buf, size_t buf_len)
 {
     bool inc = true;

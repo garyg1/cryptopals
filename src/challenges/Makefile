@@ -25,6 +25,7 @@ challenges:
 	$(CC) $(CFLAGS) 3-4.c -o 3-4.exe
 	$(CC) $(CFLAGS) 3-5.c -o 3-5.exe
 	$(CC) $(CFLAGS) 3-6.c -o 3-6.exe
+	$(CC) $(CFLAGS) 3-7.c -o 3-7.exe
 
 clean:
 	rm -f *.exe
