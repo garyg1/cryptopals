@@ -1,8 +1,9 @@
 CC=clang
-CFLAGS= -Wall -Ofast -L/opt/homebrew/opt/openssl@3/lib -I/opt/homebrew/opt/openssl@3/include -lssl -lcrypto
+CFLAGS= -Wall -L/opt/homebrew/opt/openssl@3/lib -I/opt/homebrew/opt/openssl@3/include -lssl -lcrypto
 
 all: challenges
 
+# recompile every time due to test binary changes to ./lib
 challenges:
 	$(CC) $(CFLAGS) 1-1.c -o 1-1.exe
 	$(CC) $(CFLAGS) 1-2.c -o 1-2.exe
