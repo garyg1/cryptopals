@@ -1,5 +1,5 @@
 CC=clang
-CFLAGS= -Wall -L/opt/homebrew/opt/openssl@3/lib -I/opt/homebrew/opt/openssl@3/include -lssl -lcrypto
+CFLAGS= -Wall -Ofast -L/opt/homebrew/opt/openssl@3/lib -I/opt/homebrew/opt/openssl@3/include -lssl -lcrypto
 
 all: challenges
 
@@ -26,6 +26,7 @@ challenges:
 	$(CC) $(CFLAGS) 3-5.c -o 3-5.exe
 	$(CC) $(CFLAGS) 3-6.c -o 3-6.exe
 	$(CC) $(CFLAGS) 3-7.c -o 3-7.exe
+	$(CC) $(CFLAGS) 3-8.c -o 3-8.exe
 
 clean:
 	rm -f *.exe

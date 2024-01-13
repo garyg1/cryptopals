@@ -506,3 +506,32 @@ void print_string_dict(struct string_dict *dict)
     }
     printf("}\n");
 }
+
+bool contains_substring(buf_t buf1, size_t buf1_len, buf_t buf2, size_t buf2_len)
+{
+    if (buf1_len < buf2_len)
+    {
+        return false;
+    }
+
+    size_t max = buf1_len - buf2_len + 1;
+    for (int i = 0; i < max; i++)
+    {
+        bool different = false;
+        for (int j = 0; j < buf2_len; j++)
+        {
+            if (buf1[i + j] != buf2[j])
+            {
+                different = true;
+                break;
+            }
+        }
+
+        if (!different)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
