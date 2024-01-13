@@ -5,6 +5,7 @@
 #include <openssl/ssl.h>
 #include "../lib/common.c"
 #include "../lib/encoding.c"
+#include "../lib/crypto.c"
 
 int main(int argc, char const *argv[])
 {

@@ -234,7 +234,7 @@ buf_t xor_buffers(buf_t b1, buf_t b2, size_t len)
     return result;
 }
 
-buf_t xor_buffer_inplace(buf_t result, buf_t b1, buf_t b2, size_t len)
+buf_t xor_buffers_inplace(buf_t result, buf_t b1, buf_t b2, size_t len)
 {
     for (int i = 0; i < len; i++)
     {

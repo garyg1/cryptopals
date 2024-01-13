@@ -70,7 +70,7 @@ int main(int argc, char const *argv[])
     byte_t out[1000] = {0};
     for (int i = 0; i < num_lines; i++)
     {
-        xor_buffer_inplace(out, ciphertexts[i], guesses, min_len);
+        xor_buffers_inplace(out, ciphertexts[i], guesses, min_len);
         out[min_len] = '\0';
 
         printf("[%02d] %s\n", i, out);

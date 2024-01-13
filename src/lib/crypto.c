@@ -94,6 +94,16 @@ buf_t encrypt_block_aes128_inplace(buf_t buf, buf_t key, buf_t out)
     return out;
 }
 
+buf_t decrypt_block_aes128_inplace(buf_t buf, buf_t key, buf_t out)
+{
+    AES_KEY enc_key;
+    AES_set_decrypt_key(key, AES_128_KEY_SIZE_BYTES * 8, &enc_key);
+
+    AES_decrypt(buf, out, &enc_key);
+
+    return out;
+}
+
 buf_t decrypt_aes128_cbc(buf_t ciphertext, size_t ciphertext_len, buf_t key, buf_t iv, size_t *plaintext_len)
 {
     int num_blocks = ciphertext_len / AES_128_BLOCK_SIZE_BYTES;
@@ -150,14 +160,34 @@ buf_t encrypt_aes128_ecb(buf_t unpadded_plaintext, size_t unpadded_plaintext_len
     int num_blocks = plaintext_len / AES_128_BLOCK_SIZE_BYTES;
 
     buf_t out = calloc(num_blocks * AES_128_BLOCK_SIZE_BYTES, 1);
+
+    byte_t ciphertext_block[AES_128_BLOCK_SIZE_BYTES];
     for (int i = 0; i < num_blocks; i++)
     {
-        buf_t ciphertext_block = encrypt_block_aes128(plaintext + i * AES_128_BLOCK_SIZE_BYTES, key);
+        encrypt_block_aes128_inplace(plaintext + i * AES_128_BLOCK_SIZE_BYTES, key, ciphertext_block);
         memcpy(out + i * AES_128_BLOCK_SIZE_BYTES, ciphertext_block, AES_128_BLOCK_SIZE_BYTES);
     }
 
     *ciphertext_len = num_blocks * AES_128_BLOCK_SIZE_BYTES;
     return out;
+}
+
+buf_t decrypt_aes128_ecb(buf_t ciphertext, size_t ciphertext_len, buf_t key, size_t *plaintext_len)
+{
+    int num_blocks = ciphertext_len / AES_128_BLOCK_SIZE_BYTES;
+
+    buf_t plaintext = calloc(num_blocks * AES_128_BLOCK_SIZE_BYTES + 1, 1);
+    plaintext[num_blocks * AES_128_BLOCK_SIZE_BYTES] = '\0';
+
+    byte_t plaintext_block[AES_128_BLOCK_SIZE_BYTES];
+    for (int i = 0; i < num_blocks; i++)
+    {
+        decrypt_block_aes128_inplace(ciphertext + i * AES_128_BLOCK_SIZE_BYTES, key, plaintext_block);
+        memcpy(plaintext + i * AES_128_BLOCK_SIZE_BYTES, plaintext_block, AES_128_BLOCK_SIZE_BYTES);
+    }
+
+    *plaintext_len = num_blocks * AES_128_BLOCK_SIZE_BYTES;
+    return plaintext;
 }
 
 bool try_detect_ecb(unsigned char *ciphertext, size_t ciphertext_len)
@@ -198,7 +228,7 @@ bool try_detect_ecb2(unsigned char *ciphertext, size_t ciphertext_len, int *segm
     return false;
 }
 
-void encrypt_aes128_ctr(buf_t plaintext, size_t plaintext_len, buf_t key, buf_t nonce, buf_t ciphertext)
+void encrypt_aes128_ctr_offset(buf_t plaintext, size_t plaintext_len, buf_t key, buf_t nonce, buf_t ciphertext, size_t offset_blocks)
 {
     int num_blocks = (plaintext_len + AES_128_BLOCK_SIZE_BYTES - 1) / AES_128_BLOCK_SIZE_BYTES;
 
@@ -206,15 +236,25 @@ void encrypt_aes128_ctr(buf_t plaintext, size_t plaintext_len, buf_t key, buf_t 
     byte_t ctr[AES_128_BLOCK_SIZE_BYTES];
     memcpy(ctr, nonce, AES_128_BLOCK_SIZE_BYTES);
 
+    for (int i = 0; i < offset_blocks; i++)
+    {
+        increment_buffer_le(ctr + AES_128_CTR_NONCE_SIZE_BYTES, AES_128_CTR_BLOCKCOUNT_SIZE_BYTES);
+    }
+
     for (int i = 0; i < num_blocks; i++)
     {
         encrypt_block_aes128_inplace(ctr, key, encrypted_ctr);
         size_t offset = i * AES_128_BLOCK_SIZE_BYTES;
         size_t curr_block_len = min(AES_128_BLOCK_SIZE_BYTES, plaintext_len - offset);
-        xor_buffer_inplace(ciphertext + offset, plaintext + offset, encrypted_ctr, curr_block_len);
+        xor_buffers_inplace(ciphertext + offset, plaintext + offset, encrypted_ctr, curr_block_len);
 
         increment_buffer_le(ctr + AES_128_CTR_NONCE_SIZE_BYTES, AES_128_CTR_BLOCKCOUNT_SIZE_BYTES);
     }
+}
+
+void encrypt_aes128_ctr(buf_t plaintext, size_t plaintext_len, buf_t key, buf_t nonce, buf_t ciphertext)
+{
+    encrypt_aes128_ctr_offset(plaintext, plaintext_len, key, nonce, ciphertext, 0);
 }
 
 void decrypt_aes128_ctr(buf_t ciphertext, size_t ciphertext_len, buf_t key, buf_t nonce, buf_t plaintext)
@@ -230,7 +270,7 @@ void decrypt_aes128_ctr(buf_t ciphertext, size_t ciphertext_len, buf_t key, buf_
         encrypt_block_aes128_inplace(ctr, key, encrypted_ctr);
         size_t offset = i * AES_128_BLOCK_SIZE_BYTES;
         size_t curr_block_len = min(AES_128_BLOCK_SIZE_BYTES, ciphertext_len - offset);
-        xor_buffer_inplace(plaintext + offset, ciphertext + offset, encrypted_ctr, curr_block_len);
+        xor_buffers_inplace(plaintext + offset, ciphertext + offset, encrypted_ctr, curr_block_len);
 
         increment_buffer_le(ctr + AES_128_CTR_NONCE_SIZE_BYTES, AES_128_CTR_BLOCKCOUNT_SIZE_BYTES);
     }
@@ -258,4 +298,3 @@ buf_t zero_iv()
     buf_t b = (buf_t) "\x00";
     return repeat_buffer(b, 1, 16);
 }
-
