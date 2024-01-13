@@ -321,12 +321,17 @@ buf_t concat_buffers2(const buf_t b1, size_t b1_len, const buf_t b2, size_t b2_l
     return out;
 }
 
-buf_t concat_buffers3(const buf_t b1, size_t b1_len, const buf_t b2, size_t b2_len, const buf_t b3, size_t b3_len)
+void concat_buffers3_inplace(buf_t out, const buf_t b1, size_t b1_len, const buf_t b2, size_t b2_len, const buf_t b3, size_t b3_len)
 {
-    buf_t out = malloc(b1_len + b2_len + b3_len);
     memcpy(out, b1, b1_len);
     memcpy(out + b1_len, b2, b2_len);
     memcpy(out + b1_len + b2_len, b3, b3_len);
+}
+
+buf_t concat_buffers3(const buf_t b1, size_t b1_len, const buf_t b2, size_t b2_len, const buf_t b3, size_t b3_len)
+{
+    buf_t out = malloc(b1_len + b2_len + b3_len);
+    concat_buffers3_inplace(out, b1, b1_len, b2, b2_len, b3, b3_len);
     return out;
 }
 

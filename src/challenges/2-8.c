@@ -5,12 +5,12 @@
 #include "../lib/common.c"
 #include "../lib/crypto.c"
 
-static buf_t m_key;
+static buf_t key;
 static buf_t iv;
 
 void init_encryption_oracle()
 {
-    m_key = random_aes128_key();
+    key = random_aes128_key();
     iv = random_aes128_iv();
 }
 
@@ -27,12 +27,12 @@ buf_t encryption_oracle(buf_t input, size_t input_len, size_t *enc_len)
         input, input_len,
         suffix, suffix_len);
 
-    return encrypt_aes128_cbc(plaintext, plaintext_len, m_key, iv, enc_len);
+    return encrypt_aes128_cbc(plaintext, plaintext_len, key, iv, enc_len);
 }
 
 buf_t decryption_oracle(buf_t ciphertext, size_t ciphertext_len, size_t *dec_len)
 {
-    return decrypt_aes128_cbc(ciphertext, ciphertext_len, m_key, iv, dec_len);
+    return decrypt_aes128_cbc(ciphertext, ciphertext_len, key, iv, dec_len);
 }
 
 void solve()
