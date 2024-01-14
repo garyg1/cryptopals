@@ -313,11 +313,16 @@ buf_t copy_buffer(const buf_t b1, size_t len)
     return buffer_substring(b1, len);
 }
 
+void concat_buffers2_inplace(buf_t out, const buf_t b1, size_t b1_len, const buf_t b2, size_t b2_len)
+{
+    memcpy(out, b1, b1_len);
+    memcpy(out + b1_len, b2, b2_len);
+}
+
 buf_t concat_buffers2(const buf_t b1, size_t b1_len, const buf_t b2, size_t b2_len)
 {
     buf_t out = malloc(b1_len + b2_len);
-    memcpy(out, b1, b1_len);
-    memcpy(out + b1_len, b2, b2_len);
+    concat_buffers2_inplace(out, b1, b1_len, b2, b2_len);
     return out;
 }
 
