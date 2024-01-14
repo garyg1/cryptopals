@@ -94,6 +94,11 @@ bool is_alpha(char c)
     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ' ' || c == '\'';
 }
 
+bool is_special(char c)
+{
+    return !(c >= 32 && c <= 126);
+}
+
 int get_english_freq_score(char c)
 {
     if (c >= 'A' && c <= 'Z')
@@ -544,4 +549,20 @@ bool contains_substring(buf_t buf1, size_t buf1_len, buf_t buf2, size_t buf2_len
     }
 
     return false;
+}
+
+void print_ascii_only(buf_t buf, size_t len)
+{
+    for (int i = 0; i < len; i++)
+    {
+        if (!is_special(buf[i]))
+        {
+            printf("%c", buf[i]);
+        }
+        else
+        {
+            printf("\\0x%02x", buf[i]);
+        }
+    }
+    printf("\n");
 }

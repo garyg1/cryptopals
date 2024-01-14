@@ -32,6 +32,7 @@ challenges:
 	$(CC) $(CFLAGS) 4-2.c -o 4-2.exe
 	$(CC) $(CFLAGS) 4-3.c -o 4-3.exe
 	$(CC) $(CFLAGS) 4-4.c -o 4-4.exe
+	$(CC) $(CFLAGS) 4-5.c -o 4-5.exe
 
 clean:
 	rm -f *.exe

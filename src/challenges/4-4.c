@@ -9,14 +9,15 @@
 int main(int argc, char const *argv[])
 {
     byte_t key[] = "YELLOW SUBMARINE";
-    size_t key_len = sizeof(key) - 1;
+    const size_t key_len = sizeof(key) - 1;
 
     byte_t message[] = "the quick brown fox jumps over the lazy dog.";
-    size_t message_len = sizeof(message) - 1;
+    const size_t message_len = sizeof(message) - 1;
 
-    size_t input_len = key_len + message_len;
-    byte_t input[input_len];
+    const size_t input_len = key_len + message_len;
+    byte_t input[input_len + 1];
     concat_buffers2_inplace(input, key, key_len, message, message_len);
+    input[input_len] = '\0';
 
     printf("%s\n", input);
 

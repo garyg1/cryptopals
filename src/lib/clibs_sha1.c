@@ -1,5 +1,7 @@
 #pragma once
 /*
+https://github.com/clibs/sha1/blob/master/sha1.c
+
 SHA-1 in C
 By Steve Reid <steve@edmweb.com>
 100% Public Domain
@@ -24,6 +26,12 @@ typedef struct
     uint32_t count[2];
     unsigned char buffer[64];
 } SHA1_CTX;
+
+void print_sha_state(SHA1_CTX *context)
+{
+    printf("count: %u %u\n", context->count[0], context->count[1]);
+    printf("state: %x %x %x %x %x\n", context->state[0], context->state[1], context->state[2], context->state[3], context->state[4]);
+}
 
 #include <stdio.h>
 #include <string.h>
@@ -201,6 +209,27 @@ void SHA1Init(
     context->count[0] = context->count[1] = 0;
 }
 
+void SHA1InitFromDigest(
+    SHA1_CTX *context,
+    const unsigned char *digest,
+    uint32_t count0_guess,
+    uint32_t count1_guess)
+{
+    uint32_t a = ((uint32_t)digest[0 * 4 + 0]) << 24 | ((uint32_t)digest[0 * 4 + 1]) << 16 | ((uint32_t)digest[0 * 4 + 2]) << 8 | ((uint32_t)digest[0 * 4 + 3]);
+    uint32_t b = ((uint32_t)digest[1 * 4 + 0]) << 24 | ((uint32_t)digest[1 * 4 + 1]) << 16 | ((uint32_t)digest[1 * 4 + 2]) << 8 | ((uint32_t)digest[1 * 4 + 3]);
+    uint32_t c = ((uint32_t)digest[2 * 4 + 0]) << 24 | ((uint32_t)digest[2 * 4 + 1]) << 16 | ((uint32_t)digest[2 * 4 + 2]) << 8 | ((uint32_t)digest[2 * 4 + 3]);
+    uint32_t d = ((uint32_t)digest[3 * 4 + 0]) << 24 | ((uint32_t)digest[3 * 4 + 1]) << 16 | ((uint32_t)digest[3 * 4 + 2]) << 8 | ((uint32_t)digest[3 * 4 + 3]);
+    uint32_t e = ((uint32_t)digest[4 * 4 + 0]) << 24 | ((uint32_t)digest[4 * 4 + 1]) << 16 | ((uint32_t)digest[4 * 4 + 2]) << 8 | ((uint32_t)digest[4 * 4 + 3]);
+    /* SHA1 initialization constants */
+    context->state[0] = a;
+    context->state[1] = b;
+    context->state[2] = c;
+    context->state[3] = d;
+    context->state[4] = e;
+    context->count[0] = count0_guess;
+    context->count[1] = count1_guess;
+}
+
 /* Run your data through this. */
 
 void SHA1Update(
@@ -293,6 +322,8 @@ void clibs_SHA1(
 
     SHA1Init(&ctx);
     for (ii = 0; ii < len; ii += 1)
+    {
         SHA1Update(&ctx, (const unsigned char *)str + ii, 1);
+    }
     SHA1Final((unsigned char *)hash_out, &ctx);
 }
